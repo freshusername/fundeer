@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         :root {
             --primary: #4F46E5;
@@ -27,7 +29,6 @@
             line-height: 1.6;
             color: var(--text);
             overflow-x: hidden;
-            background: #fff;
         }
 
         .container {
@@ -79,7 +80,6 @@
             opacity: 0.8;
         }
 
-        /* Hero Section */
         .hero {
             padding: 12rem 0 6rem;
             background: linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%);
@@ -134,7 +134,6 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
 
-        /* Features */
         .features {
             padding: 8rem 0;
             background: white;
@@ -185,7 +184,6 @@
             height: 30px;
         }
 
-        /* Screenshots */
         .screenshots {
             padding: 8rem 0;
             background: #f3f4f6;
@@ -214,7 +212,6 @@
             transform: scale(1.05);
         }
 
-        /* Download */
         .download {
             padding: 8rem 0;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -248,7 +245,6 @@
             transform: translateY(-2px);
         }
 
-        /* Footer */
         footer {
             padding: 4rem 0;
             background: #1F2937;
@@ -284,7 +280,6 @@
             color: white;
         }
 
-        /* Showcase - Using Images Instead of 3D Models */
         .iphone-showcase {
             position: relative;
             background: #f8fafc;
@@ -325,14 +320,6 @@
             transform: translateY(-50%);
             width: 300px;
             height: 600px;
-        }
-
-        .phone-mock {
-            width: 300px;
-            height: 600px;
-            border-radius: 20px;
-            object-fit: cover;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         @media (max-width: 1024px) {
@@ -379,9 +366,6 @@
                 <a href="#screenshots">Screenshots</a>
                 <a href="#download">Download</a>
                 <a href="#contact">Contact</a>
-                <!-- Link to new policy pages -->
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Use</a>
             </div>
         </nav>
     </header>
@@ -408,10 +392,7 @@
                     <p>Add and categorize your expenses with just a few taps. Customize categories with icons and colors
                         to match your style.</p>
                 </div>
-                <div class="phone-container">
-                    <!-- Using image instead of 3D model -->
-                    <img src="screenshots/1.jpg" alt="Showcase 1" class="phone-mock">
-                </div>
+                <div class="phone-container" id="phone1"></div>
             </div>
         </div>
 
@@ -422,9 +403,7 @@
                     <p>Track your spending patterns with detailed graphs and charts. Compare expenses across different
                         categories and time periods.</p>
                 </div>
-                <div class="phone-container">
-                    <img src="screenshots/2.jpg" alt="Showcase 2" class="phone-mock">
-                </div>
+                <div class="phone-container" id="phone2"></div>
             </div>
         </div>
 
@@ -435,9 +414,7 @@
                     <p>Choose your preferred theme, customize app tint colors, and make the app truly yours with
                         flexible appearance settings.</p>
                 </div>
-                <div class="phone-container">
-                    <img src="screenshots/3.jpg" alt="Showcase 3" class="phone-mock">
-                </div>
+                <div class="phone-container" id="phone3"></div>
             </div>
         </div>
 
@@ -448,9 +425,7 @@
                     <p>Get a comprehensive view of your finances with intuitive donut charts and quick expense
                         management buttons.</p>
                 </div>
-                <div class="phone-container">
-                    <img src="screenshots/4.jpg" alt="Showcase 4" class="phone-mock">
-                </div>
+                <div class="phone-container" id="phone4"></div>
             </div>
         </div>
     </div>
@@ -515,8 +490,8 @@
             <div class="footer-column">
                 <h3>Legal</h3>
                 <ul>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
                     <li><a href="#">Cookie Policy</a></li>
                 </ul>
             </div>
@@ -526,7 +501,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
         AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
-
         const header = document.getElementById('header');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 100) {
@@ -536,6 +510,91 @@
             }
         });
         gsap.registerPlugin(ScrollTrigger);
+
+        class PhoneModel {
+            constructor(containerId, texturePath) {
+                this.container = document.getElementById(containerId);
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, 300 / 600, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer.setSize(300, 600);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.container.appendChild(this.renderer.domElement);
+                this.camera.position.z = 5;
+                this.ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+                this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+                this.directionalLight.position.set(5, 5, 5);
+                this.backLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                this.backLight.position.set(-5, -5, -5);
+                this.scene.add(this.ambientLight, this.directionalLight, this.backLight);
+                this.texturePath = texturePath;
+                this.loadModel();
+                this.animate();
+            }
+            loadModel() {
+                const loader = new THREE.GLTFLoader();
+                loader.load(
+                    'iphone_16_pro_max.glb',
+                    (gltf) => {
+                        this.phone = gltf.scene;
+                        const box = new THREE.Box3().setFromObject(this.phone);
+                        const center = box.getCenter(new THREE.Vector3());
+                        this.phone.position.sub(center);
+                        this.phone.scale.set(2, 2, 2);
+
+                        console.log('Model loaded. Checking mesh names:');
+                        this.phone.traverse((child) => {
+                            console.log(child.name);
+                        });
+
+                        const screenTexture = new THREE.TextureLoader().load(this.texturePath);
+                        screenTexture.encoding = THREE.sRGBEncoding;
+
+                        this.phone.traverse((child) => {
+                            if (child.isMesh && child.name.toLowerCase().includes('screen')) {
+                                child.material = new THREE.MeshBasicMaterial({ map: screenTexture });
+                            }
+                        });
+                        this.scene.add(this.phone);
+                    },
+                    undefined,
+                    (error) => {
+                        console.error('Error loading GLB model:', error);
+                    }
+                );
+            }
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                this.renderer.render(this.scene, this.camera);
+            }
+            rotate(progress) {
+                if (this.phone) {
+                    const targetRotation = progress * Math.PI * 2;
+                    this.phone.rotation.y += (targetRotation - this.phone.rotation.y) * 0.1;
+                }
+            }
+        }
+
+        const phones = [
+            new PhoneModel('phone1', 'screenshots/1.jpg'),
+            new PhoneModel('phone2', 'screenshots/2.jpg'),
+            new PhoneModel('phone3', 'screenshots/3.jpg'),
+            new PhoneModel('phone4', 'screenshots/4.jpg')
+        ];
+
+        document.querySelectorAll('.showcase-section').forEach((section, index) => {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top center',
+                    end: 'bottom center',
+                    scrub: 1,
+                    onUpdate: (self) => {
+                        phones[index].rotate(self.progress);
+                    }
+                }
+            });
+        });
     </script>
 </body>
 
