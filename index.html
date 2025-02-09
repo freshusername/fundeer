@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Fundeer - Innovative iOS App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #818CF8;
+            --text: #1F2937;
+            --bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .hero {
+            padding: 12rem 0 6rem;
+            background: linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%);
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: #4B5563;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .app-screenshot {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .features {
+            padding: 8rem 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .screenshots {
+            padding: 8rem 0;
+            background: #f3f4f6;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .screenshot-item {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .download {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+        }
+
+        .download h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .download p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .app-store-button {
+            display: inline-block;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .app-store-button:hover {
+            transform: translateY(-2px);
+        }
+
+        footer {
+            padding: 4rem 0;
+            background: #1F2937;
+            color: white;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: #D1D5DB;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+        }
+
+        .iphone-showcase {
+            position: relative;
+            background: #f8fafc;
+        }
+
+        .showcase-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showcase-content {
+            max-width: 500px;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .showcase-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .showcase-content p {
+            font-size: 1.2rem;
+            color: #4B5563;
+        }
+
+        .phone-container {
+            position: absolute;
+            right: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 600px;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .screenshots-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+        <nav class="container">
+            <div class="logo">Fundeer</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#screenshots">Screenshots</a>
+                <a href="#download">Download</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text" data-aos="fade-right">
+                <h1>Transform Your Financial Future</h1>
+                <p>Fundeer helps you manage your investments, track your portfolio, and make smarter financial decisions
+                    with AI-powered insights.</p>
+                <a href="#download" class="cta-button">Download Now</a>
+            </div>
+            <div class="hero-image" data-aos="fade-left">
+                <img src="/api/placeholder/300/600" alt="Fundeer App Screenshot" class="app-screenshot">
+            </div>
+        </div>
+    </section>
+
+    <div class="iphone-showcase">
+        <div class="showcase-section" id="section1">
+            <div class="container">
+                <div class="showcase-content">
+                    <h2>Easy Expense Tracking</h2>
+                    <p>Add and categorize your expenses with just a few taps. Customize categories with icons and colors
+                        to match your style.</p>
+                </div>
+                <div class="phone-container" id="phone1"></div>
+            </div>
+        </div>
+
+        <div class="showcase-section" id="section2">
+            <div class="container">
+                <div class="showcase-content">
+                    <h2>Powerful Analytics</h2>
+                    <p>Track your spending patterns with detailed graphs and charts. Compare expenses across different
+                        categories and time periods.</p>
+                </div>
+                <div class="phone-container" id="phone2"></div>
+            </div>
+        </div>
+
+        <div class="showcase-section" id="section3">
+            <div class="container">
+                <div class="showcase-content">
+                    <h2>Personalized Experience</h2>
+                    <p>Choose your preferred theme, customize app tint colors, and make the app truly yours with
+                        flexible appearance settings.</p>
+                </div>
+                <div class="phone-container" id="phone3"></div>
+            </div>
+        </div>
+
+        <div class="showcase-section" id="section4">
+            <div class="container">
+                <div class="showcase-content">
+                    <h2>Clear Overview</h2>
+                    <p>Get a comprehensive view of your finances with intuitive donut charts and quick expense
+                        management buttons.</p>
+                </div>
+                <div class="phone-container" id="phone4"></div>
+            </div>
+        </div>
+    </div>
+
+    <section class="screenshots" id="screenshots">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2>App Screenshots</h2>
+                <p>Take a closer look at Fundeer</p>
+            </div>
+            <div class="screenshots-grid">
+                <div class="screenshot-item" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="/api/placeholder/300/500" alt="Fundeer Screenshot 1">
+                </div>
+                <div class="screenshot-item" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="/api/placeholder/300/500" alt="Fundeer Screenshot 2">
+                </div>
+                <div class="screenshot-item" data-aos="zoom-in" data-aos-delay="300">
+                    <img src="/api/placeholder/300/500" alt="Fundeer Screenshot 3">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="download" id="download">
+        <div class="container">
+            <h2 data-aos="fade-up">Download Fundeer Today</h2>
+            <p data-aos="fade-up" data-aos-delay="100">Join thousands of users who are already transforming their
+                financial future</p>
+            <a href="#" class="app-store-button" data-aos="fade-up" data-aos-delay="200">
+                Download on the App Store
+            </a>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container footer-content">
+            <div class="footer-column">
+                <h3>Fundeer</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Features</h3>
+                <ul>
+                    <li><a href="#">Portfolio Tracking</a></li>
+                    <li><a href="#">AI Insights</a></li>
+                    <li><a href="#">Security</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        gsap.registerPlugin(ScrollTrigger);
+
+        class PhoneModel {
+            constructor(containerId, texturePath) {
+                this.container = document.getElementById(containerId);
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, 300 / 600, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer.setSize(300, 600);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.container.appendChild(this.renderer.domElement);
+                this.camera.position.z = 5;
+                this.ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+                this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+                this.directionalLight.position.set(5, 5, 5);
+                this.backLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                this.backLight.position.set(-5, -5, -5);
+                this.scene.add(this.ambientLight, this.directionalLight, this.backLight);
+                this.texturePath = texturePath;
+                this.loadModel();
+                this.animate();
+            }
+            loadModel() {
+                const loader = new THREE.GLTFLoader();
+                loader.load(
+                    'iphone_16_pro_max.glb',
+                    (gltf) => {
+                        this.phone = gltf.scene;
+                        const box = new THREE.Box3().setFromObject(this.phone);
+                        const center = box.getCenter(new THREE.Vector3());
+                        this.phone.position.sub(center);
+                        this.phone.scale.set(2, 2, 2);
+
+                        console.log('Model loaded. Checking mesh names:');
+                        this.phone.traverse((child) => {
+                            console.log(child.name);
+                        });
+
+                        const screenTexture = new THREE.TextureLoader().load(this.texturePath);
+                        screenTexture.encoding = THREE.sRGBEncoding;
+
+                        this.phone.traverse((child) => {
+                            if (child.isMesh && child.name.toLowerCase().includes('screen')) {
+                                child.material = new THREE.MeshBasicMaterial({ map: screenTexture });
+                            }
+                        });
+                        this.scene.add(this.phone);
+                    },
+                    undefined,
+                    (error) => {
+                        console.error('Error loading GLB model:', error);
+                    }
+                );
+            }
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                this.renderer.render(this.scene, this.camera);
+            }
+            rotate(progress) {
+                if (this.phone) {
+                    const targetRotation = progress * Math.PI * 2;
+                    this.phone.rotation.y += (targetRotation - this.phone.rotation.y) * 0.1;
+                }
+            }
+        }
+
+        const phones = [
+            new PhoneModel('phone1', 'screenshots/1.jpg'),
+            new PhoneModel('phone2', 'screenshots/2.jpg'),
+            new PhoneModel('phone3', 'screenshots/3.jpg'),
+            new PhoneModel('phone4', 'screenshots/4.jpg')
+        ];
+
+        document.querySelectorAll('.showcase-section').forEach((section, index) => {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top center',
+                    end: 'bottom center',
+                    scrub: 1,
+                    onUpdate: (self) => {
+                        phones[index].rotate(self.progress);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
